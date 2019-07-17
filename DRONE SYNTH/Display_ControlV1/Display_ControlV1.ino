@@ -1,3 +1,10 @@
+/*Companion code to the drone synth to control a handful of neopixels
+that keep track of which wavetables are currently selected for each
+oscillator. A seperate uC was necessary since the Mozzi library 
+that powers the synth is incompatible with the neopixel timing library.*/
+
+
+
 #include <Adafruit_NeoPixel.h>
 #define LED_PIN 12
 #define LED_COUNT 6
