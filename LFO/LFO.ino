@@ -1,25 +1,28 @@
 /*
-Brief Sketch for an 8-channel Relative Tempo LFO
+Brief Sketch for an 12-channel Relative Tempo LFO
+8 channels set at 8(2^n) seconds 
 */
 
 const int pin = 0; 
-byte output;
-int freq, period, pin_value;
-long t_zero, t_one, delta_t;
+byte output, output2;
+int period, period2, pin_value;
+long t_zero, t_one, delta_t, t_off_zero, t_off_one;
 
 
 void setup() {
-  for (int i=0;i<9;i++) {
+  for (int i=0;i<13;i++) {
     pinMode(i, OUTPUT);
   }
-    t_zero = millis();
-    output = 0;
+  t_zero = millis();
+  t_zero_off = millis();
+  output = 0;
+  output2 = 0;
 }
 
 void loop() {
     pin_value = analogRead(pin);
-    freq = pin_value / 2;
-    period = 4000 / freq;
+    period = 10000 * pin_value;
+    period2 = 6 * period;  //8 * ((3 * period) / 4)), times 3/4 to map to off beat and times 8 to slow down since PORTB is only 5 bits instead of 8
     t_one = millis();
     delta_t = t_one - t_zero;
     if (delta_t >= period) {
@@ -28,4 +31,11 @@ void loop() {
       PORTD = output;
       t_zero = t_one;
     }
+    t_off_one = millis();
+    delta_t = t_off_one - t_off_zero;
+    if (delta_t >= period2) {
+      if (output2 == 64) {output2 = 0;}
+      else {output2++;}
+      PORTB = output2;
+      t_off_zero = t_off_one;
 }
